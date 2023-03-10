@@ -142,6 +142,15 @@ type core_match_call_trace
   | CoreCall of (location * core_match_intermediate_var list * core_match_call_trace) 
 ] <ocaml repr="classic">
 
+type core_match_source_trace 
+  <ocaml attr="deriving show">
+  <python decorator="dataclass(frozen=True)"> = {
+  ?taint_source: core_match_call_trace option;
+  (* Intermediate variables which are involved in the dataflow. For taint, this
+   * explains how the taint flows from the source to the sink. *)
+  ?intermediate_vars: core_match_intermediate_var list option;
+  }
+
 (* Provides information about dataflow that leads to a finding. For now, just
  * provides taint traces (i.e. information about the taint source and how the
  * source reaches the sink). In the future, we may want to include more dataflow
@@ -150,10 +159,11 @@ type core_match_call_trace
 type core_match_dataflow_trace
   <ocaml attr="deriving show">
   <python decorator="dataclass(frozen=True)"> = {
-  ?taint_source: core_match_call_trace option;
-  (* Intermediate variables which are involved in the dataflow. For taint, this
-   * explains how the taint flows from the source to the sink. *)
-  ?intermediate_vars: core_match_intermediate_var list option;
+  (* since semgrep 1.15.0 *)
+  (* A given taint finding may contain multiple sources feeding into it. 
+     This information is collected in the trace.
+   *)
+  ?taint_sources: core_match_source_trace list option;
   (* For now, omitting the taint sink, since it's redundant data except for
    * certain cases that only appear with DeepSemgrep. We can add it in later
    * without breaking consumers. *)

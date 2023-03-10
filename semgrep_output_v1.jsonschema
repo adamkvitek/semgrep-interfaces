@@ -87,7 +87,8 @@
           "minItems": 2,
           "items": false,
           "prefixItems": [
-            { "const": "CoreLoc" }, { "$ref": "#/definitions/location" }
+            { "const": "CoreLoc" },
+            { "$ref": "#/definitions/location" }
           ]
         },
         {
@@ -115,7 +116,7 @@
         }
       ]
     },
-    "core_match_dataflow_trace": {
+    "core_match_source_trace": {
       "type": "object",
       "required": [],
       "properties": {
@@ -123,6 +124,16 @@
         "intermediate_vars": {
           "type": "array",
           "items": { "$ref": "#/definitions/core_match_intermediate_var" }
+        }
+      }
+    },
+    "core_match_dataflow_trace": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "taint_sources": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/core_match_source_trace" }
         },
         "taint_sink": { "$ref": "#/definitions/core_match_call_trace" }
       }
@@ -432,7 +443,8 @@
               "minItems": 2,
               "items": false,
               "prefixItems": [
-                { "$ref": "#/definitions/location" }, { "type": "string" }
+                { "$ref": "#/definitions/location" },
+                { "type": "string" }
               ]
             }
           ]

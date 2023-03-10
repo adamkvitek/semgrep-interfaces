@@ -877,23 +877,21 @@ class CoreMatchCallTrace:
 
 
 @dataclass(frozen=True)
-class CoreMatchDataflowTrace:
-    """Original type: core_match_dataflow_trace = { ... }"""
+class CoreMatchSourceTrace:
+    """Original type: core_match_source_trace = { ... }"""
 
     taint_source: Optional[CoreMatchCallTrace] = None
     intermediate_vars: Optional[List[CoreMatchIntermediateVar]] = None
-    taint_sink: Optional[CoreMatchCallTrace] = None
 
     @classmethod
-    def from_json(cls, x: Any) -> 'CoreMatchDataflowTrace':
+    def from_json(cls, x: Any) -> 'CoreMatchSourceTrace':
         if isinstance(x, dict):
             return cls(
                 taint_source=CoreMatchCallTrace.from_json(x['taint_source']) if 'taint_source' in x else None,
                 intermediate_vars=_atd_read_list(CoreMatchIntermediateVar.from_json)(x['intermediate_vars']) if 'intermediate_vars' in x else None,
-                taint_sink=CoreMatchCallTrace.from_json(x['taint_sink']) if 'taint_sink' in x else None,
             )
         else:
-            _atd_bad_json('CoreMatchDataflowTrace', x)
+            _atd_bad_json('CoreMatchSourceTrace', x)
 
     def to_json(self) -> Any:
         res: Dict[str, Any] = {}
@@ -901,6 +899,37 @@ class CoreMatchDataflowTrace:
             res['taint_source'] = (lambda x: x.to_json())(self.taint_source)
         if self.intermediate_vars is not None:
             res['intermediate_vars'] = _atd_write_list((lambda x: x.to_json()))(self.intermediate_vars)
+        return res
+
+    @classmethod
+    def from_json_string(cls, x: str) -> 'CoreMatchSourceTrace':
+        return cls.from_json(json.loads(x))
+
+    def to_json_string(self, **kw: Any) -> str:
+        return json.dumps(self.to_json(), **kw)
+
+
+@dataclass(frozen=True)
+class CoreMatchDataflowTrace:
+    """Original type: core_match_dataflow_trace = { ... }"""
+
+    taint_sources: Optional[List[CoreMatchSourceTrace]] = None
+    taint_sink: Optional[CoreMatchCallTrace] = None
+
+    @classmethod
+    def from_json(cls, x: Any) -> 'CoreMatchDataflowTrace':
+        if isinstance(x, dict):
+            return cls(
+                taint_sources=_atd_read_list(CoreMatchSourceTrace.from_json)(x['taint_sources']) if 'taint_sources' in x else None,
+                taint_sink=CoreMatchCallTrace.from_json(x['taint_sink']) if 'taint_sink' in x else None,
+            )
+        else:
+            _atd_bad_json('CoreMatchDataflowTrace', x)
+
+    def to_json(self) -> Any:
+        res: Dict[str, Any] = {}
+        if self.taint_sources is not None:
+            res['taint_sources'] = _atd_write_list((lambda x: x.to_json()))(self.taint_sources)
         if self.taint_sink is not None:
             res['taint_sink'] = (lambda x: x.to_json())(self.taint_sink)
         return res
